@@ -8,13 +8,13 @@ class Category(models.Model):
     name = models.CharField(max_length=65)
 
     def __str__(self):
-        return f'{self.name} {self.id}'
+        return f'{self.name}'
 
 
 class Recipe(models.Model):
     title = models.CharField(max_length=65)
     description = models.CharField(max_length=165)
-    slug = models.SlugField()
+    slug = models.SlugField(unique=True)
     preparation_time = models.IntegerField()
     preparation_time_unit = models.CharField(max_length=65)
     servings = models.IntegerField()
@@ -33,4 +33,4 @@ class Recipe(models.Model):
         User, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
-        return f'{self.title} {self.id}'
+        return f'{self.title}'
