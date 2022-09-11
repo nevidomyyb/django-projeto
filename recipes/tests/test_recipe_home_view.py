@@ -3,9 +3,10 @@ from recipes import views
 
 from .test_recipe_base import RecipeTestBase
 
-# class RecipeHomeViewTest(RecipeTestBase):
-   # Home
-   def tearDown(self) -> None:
+
+class RecipeHomeViewTest(RecipeTestBase):
+    # Home
+    def tearDown(self) -> None:
         return super().tearDown()
 
     def test_recipe_home_view_function_is_correct(self):
@@ -36,3 +37,13 @@ from .test_recipe_base import RecipeTestBase
         response = self.client.get(reverse('recipes:home'))
         self.assertIn("<h1 align='center'>Sem receitas encontradas</h1>",
                       response.content.decode('utf-8'))
+
+    def test_recipe_home_is_working_pagination(self):
+        for i in range(18):
+            kwargs = {'slug': f'r{i}', 'author_data': {'username': f'u{i}'}}
+            self.make_recipe(**kwargs)
+
+        response = self.client.get(reverse('recipes:home'))
+        recipes = response.context['recipes']
+        paginator = recipes.paginator
+        self.assertEqual(paginator.num_pages, 6)
