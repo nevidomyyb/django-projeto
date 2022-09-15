@@ -36,24 +36,38 @@ class RegisterForm(forms.ModelForm):
             'email',
             'password'
         ]
+    invalid = ['"', "'", '!', '>', '<', ';', ',']
 
     def clean_password(self):
         data = self.cleaned_data.get('password')
-        if '"' in data:
-            raise ValidationError(
-                'Não pode usar " na senha',
-                code='invalid'
-            )
+        for string in self.invalid:
+            if string in data:
+                raise ValidationError(
+                    'Não se pode usar caracteres especiais na senha',
+                    code='invalid'
+                )
         return data
 
     def clean_password2(self):
         data = self.cleaned_data.get('password2')
-        if '"' in data:
-            raise ValidationError(
-                'Não pode usar " na senha',
-                code='invalid'
-            )
+        for string in self.invalid:
+            if string in data:
+                raise ValidationError(
+                    'Não se pode usar caracteres especiais na senha',
+                    code='invalid'
+                )
         return data
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        exists = User.objects.filter(email=email).exists()
+        if exists:
+            raise ValidationError(
+                'Esse e-mail já está sendo usado',
+                code='invalid',
+            )
+
+        return email
 
     def clean(self):
         cleaned_data = super().clean()
@@ -71,3 +85,10 @@ class RegisterForm(forms.ModelForm):
                     code='invalid'
                 )
             })
+
+# Login Form
+
+
+class LoginForm(forms.Form):
+    username = forms.CharField()
+    password = forms.CharField(widget=forms.PasswordInput())

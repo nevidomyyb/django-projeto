@@ -1,13 +1,20 @@
 {% extends 'global/base.html' %}
-{% block title %} Register {% endblock title %}
+{% block title %} Login {% endblock title %}
 
 {% block content %}
     <div class="main-content center container">
-        <h2>Register</h2>
+        <h2>Login</h2>
+        {% if request.user.is_authenticated %}
+        <p>
+          Você está conectado como: 
+          {{ request.user.username }}.
+          <a href="{% url 'authors:logout' %}">Clique aqui para desconectar</a>
+        </p>
+      {% endif %}
     </div>
     {% include 'recipes/partials/messages.html' %}
     <div class="form-content form-content-grid">
-        <form action="{% url 'authors:create' %}" method="POST">
+        <form action="/authors/login/create/" method="POST">
         {% csrf_token %}
 
             {% for field in form %}
@@ -20,19 +27,8 @@
                     {{field.errors}}
                </div>
             {% endfor %}
-
-            {% comment %} {% if form.errors %}
-                <div class="form-content form-content-grid ">
-                    <div class="form-group">
-                        <div class="message-error">
-                            Corriga os erros no formulário
-                        </div>
-                    </div>
-                </div>
-            {% endif %} {% endcomment %}
-
             <div class="form-group">
-                <button type="submit">Envia</button>
+                <button type="submit">Enviar</button>
             </div>
         </form>
     </div>
